@@ -1,0 +1,11 @@
+# Ignorăm mediul virtual și pachetele instalate
+.venv/
+__pycache__/
+
+# Ignorăm baza de date brută
+*.bak
+*.mdf
+*.ldf
+
+# Ignorăm fișierele temporare de la Jupyter
+.ipynb_checkpoints/
