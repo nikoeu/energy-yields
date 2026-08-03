@@ -27,6 +27,14 @@ The data was extracted from 4 main tables (`Train`, `LoggersTRENDS`, `MeteoTREND
 * **Outlier Detection (IQR):** Eliminating hardware spikes (false-positive values incorrectly reported by sensors) using the Interquartile Range statistical method.
 * **Extrapolation:** Scaling the measured production from 3 pairs of inverters to the total capacity of the park (28 pairs).
 
+## Challenges and Solutions
+
+During the development of the pipeline, several data and modeling issues were identified and resolved:
+
+* **Empty Dataset due to Aggressive Filtering:** Initially, any day with a logged alarm was removed, which resulted in an empty training set. We discovered that minor SCADA alarms occur daily without impacting energy generation. The logic was adjusted to only drop days where production dropped to near-zero levels.
+* **Hardware Glitches and False Spikes:** Sensors occasionally recorded absurdly high power spikes, corrupting the daily yield totals. This was solved by implementing the Interquartile Range (IQR) statistical method to detect and drop upper-bound outliers.
+* **Underestimating Peak Capacity in Forecasts:** The initial univariate time-series forecast plateaued around 185,000 kWh/day (regression to the mean), failing to reach the expected 210,000+ kWh target. The solution was transitioning to a multivariate forecast by injecting synthetic optimal weather data (maximum historical irradiation + summer margin), allowing the neural networks to predict true peak summer capacity.
+
 ## AI Models and Forecasting
 
 Three neural network architectures were developed to predict production:
